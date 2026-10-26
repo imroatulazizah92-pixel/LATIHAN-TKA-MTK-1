@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LATIHAN SOAL TKA MTK - SDN TRIMULYO 02</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-blue-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-blue-700 font-bold p-2 rounded-lg shadow-md flex items-center justify-center w-10 h-10 text-xl">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">SDN TRIMULYO 02</h1>
+                    <p class="text-xs text-blue-200">LATIHAN SOAL TKA (TES KEMAMPUAN AKADEMIK) - MATEMATIKA KELAS VI</p>
+                </div>
+            </div>
+            <!-- Timer Display -->
+            <div id="header-timer" class="hidden bg-red-600 text-white font-mono font-bold px-4 py-2 rounded-lg shadow flex items-center gap-2 animate-pulse">
+                <i class="fas fa-clock"></i>
+                <span id="timer-display">60:00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- 1. HALAMAN LOGIN -->
+        <div id="screen-login" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 mt-6">
+            <div class="text-center mb-6">
+                <div class="inline-block p-4 bg-blue-50 rounded-full text-blue-600 mb-3">
+                    <i class="fas fa-user-graduate text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">Login Peserta Ujian</h2>
+                <p class="text-sm text-slate-500">Tes Kemampuan Akademik (TKA) - Numerasi Matematika</p>
+            </div>
+
+            <form id="login-form" onsubmit="startExam(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap Siswa</label>
+                    <input type="text" id="input-nama" required placeholder="Masukkan nama lengkap Anda" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nomor Absen</label>
+                        <input type="number" id="input-absen" required min="1" max="50" placeholder="Contoh: 01" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Kelas</label>
+                        <select id="input-kelas" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
+                            <option value="6A">6A</option>
+                            <option value="6B">6B</option>
+                            <option value="6C">6C</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-play"></i> Mulai Ujian
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 2. HALAMAN SOAL (UJIAN) -->
+        <div id="screen-exam" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Side Kiri: Pertanyaan & Visualisasi Ilustrasi Soal -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Banner Waktu Habis -->
+                <div id="time-out-banner" class="hidden bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-lg shadow-sm">
+                    <p class="font-bold flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-amber-600"></i> Maaf waktu habis, terima kasih atas partisipasinya!
+                    </p>
+                    <p class="text-sm">Anda tetap dapat meninjau kunci jawaban, cara pembahasan lengkap, dan melihat rekapitulasi nilai.</p>
+                </div>
+
+                <!-- Card Soal -->
+                <div class="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
+                    
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                            Soal No. <span id="question-number">1</span> dari 25
+                        </span>
+                    </div>
+
+                    <!-- Diagram / Ilustrasi Gambar Soal -->
+                    <div id="illustration-container" class="mb-5 p-4 bg-slate-50 border border-slate-200 rounded-xl flex justify-center items-center min-h-[160px]">
+                        <!-- SVG / Table visualisasi dirender oleh JS -->
+                    </div>
+
+                    <!-- Teks Pertanyaan -->
+                    <h3 id="question-text" class="text-base md:text-lg font-bold text-slate-800 mb-6 leading-relaxed">
+                        <!-- Pertanyaan -->
+                    </h3>
+
+                    <!-- Pilihan Jawaban -->
+                    <div id="options-container" class="space-y-3 mb-6">
+                        <!-- Pilihan A, B, C, D dirender via JS -->
+                    </div>
+
+                    <!-- Pembahasan & Cara Kerja (Muncul setelah selesai) -->
+                    <div id="pembahasan-box" class="hidden mt-6 p-5 bg-blue-50 border border-blue-200 rounded-xl">
+                        <h4 class="font-bold text-blue-900 flex items-center gap-2 mb-2">
+                            <i class="fas fa-lightbulb text-amber-500 text-lg"></i> Kunci Jawaban & Cara Pengerjaan:
+                        </h4>
+                        <div id="pembahasan-text" class="text-sm text-blue-950 leading-relaxed font-mono whitespace-pre-line bg-white p-3.5 rounded-lg border border-blue-100"></div>
+                    </div>
+                </div>
+
+                <!-- Tombol Navigasi Bawah -->
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-md border border-slate-200">
+                    <button id="btn-prev" onclick="prevQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Soal Sebelumnya
+                    </button>
+                    <button id="btn-next" onclick="nextQuestion()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-5 rounded-lg shadow transition flex items-center gap-2">
+                        Soal Selanjutnya <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button id="btn-finish" onclick="finishExamPrompt()" class="hidden bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-5 rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i> Selesaikan Ujian
+                    </button>
+                </div>
+            </div>
+
+            <!-- Side Kanan: Navigasi Kotak Sejajar (3 Kolom) -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-md p-5 border border-slate-200 sticky top-20">
+                    <h3 class="font-bold text-slate-800 mb-3 pb-2 border-b text-sm uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-th-large text-blue-600"></i> Navigasi Soal
+                    </h3>
+                    
+                    <!-- Indikator Warna -->
+                    <div class="grid grid-cols-2 gap-2 text-xs mb-4 text-slate-600">
+                        <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-200 border"></span> Belum</div>
+                        <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-blue-600"></span> Dikerjakan</div>
+                    </div>
+
+                    <!-- Grid Kotak Sejajar 3 Baris / Kolom -->
+                    <div id="question-grid" class="grid grid-cols-3 gap-2.5 max-h-[380px] overflow-y-auto custom-scrollbar p-1">
+                        <!-- Grid 1 - 25 dirender via JS -->
+                    </div>
+
+                    <div id="rekap-link-container" class="hidden mt-6 pt-4 border-t">
+                        <button onclick="showResultsScreen()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg text-sm shadow transition flex items-center justify-center gap-2">
+                            <i class="fas fa-chart-line"></i> Lihat Hasil & Peringkat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. HALAMAN REKAP HASIL & PERINGKAT -->
+        <div id="screen-results" class="hidden space-y-6">
+            
+            <!-- Banner Ujian Selesai -->
+            <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white rounded-2xl shadow-xl p-6 md:p-8 text-center relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-extrabold mb-2">Selamat, Anda telah menyelesaikan tugas !</h2>
+                    <p class="text-blue-100 text-sm md:text-base mb-6">Hasil Tes Kemampuan Akademik (TKA) Matematika SDN Trimulyo 02</p>
+                    
+                    <div class="inline-flex flex-wrap justify-center gap-6 bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/20">
+                        <div class="text-center px-4">
+                            <p class="text-xs uppercase tracking-wider text-blue-200">Skor Anda</p>
+                            <p id="user-score" class="text-4xl font-extrabold text-white">0</p>
+                        </div>
+                        <div class="w-px bg-white/20 hidden sm:block"></div>
+                        <div class="text-center px-4">
+                            <p class="text-xs uppercase tracking-wider text-blue-200">Peringkat</p>
+                            <p id="user-rank" class="text-4xl font-extrabold text-amber-300">#1</p>
+                        </div>
+                        <div class="w-px bg-white/20 hidden sm:block"></div>
+                        <div class="text-center px-4">
+                            <p class="text-xs uppercase tracking-wider text-blue-200">Benar / Salah</p>
+                            <p id="user-correct-wrong" class="text-2xl font-bold text-white mt-1">0 / 0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALISIS PENILAIAN SISWA (FORMAT MATRIKS PER SOAL - TERPISAH Masing-Masing Nomor) -->
+            <div class="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-2">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-table text-blue-600"></i> Analisis Penilaian Siswa (Detail Per Soal)
+                        </h3>
+                        <p class="text-xs text-slate-500">Kolom 1 hingga 25 mewakili nomor soal secara terpisah (Hijau = Benar, Merah = Salah/Kosong)</p>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs font-semibold">
+                        <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-emerald-500 rounded"></span> Benar (B)</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-rose-500 rounded"></span> Salah / Kosong (S)</span>
+                    </div>
+                </div>
+
+                <!-- Matrix Table (Scroll Horizontal) -->
+                <div class="overflow-x-auto custom-scrollbar border rounded-xl">
+                    <table class="w-full text-xs text-center border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b">
+                                <th class="p-3 text-left min-w-[140px] border-r">Nama Siswa</th>
+                                <th class="p-3 border-r min-w-[50px]">Kelas</th>
+                                <th class="p-3 border-r min-w-[50px]">Absen</th>
+                                <!-- Dynamic Headers Soal 1 s/d 25 -->
+                                <script>
+                                    for(let i=1; i<=25; i++){
+                                        document.write(`<th class="p-2 border-r min-w-[34px] bg-slate-200/50">${i}</th>`);
+                                    }
+                                </script>
+                                <th class="p-3 min-w-[65px] bg-indigo-50 text-indigo-800">Skor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-analysis-tbody">
+                            <!-- Matrix Row Data via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- REKAP PERINGKAT SELURUH PESERTA -->
+            <div class="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-trophy text-amber-500"></i> Rekap Peringkat Peserta Ujian
+                </h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b">
+                                <th class="p-3">Peringkat</th>
+                                <th class="p-3">Nama Peserta</th>
+                                <th class="p-3">Kelas</th>
+                                <th class="p-3">No. Absen</th>
+                                <th class="p-3 text-center">Jawaban Benar</th>
+                                <th class="p-3 text-right">Skor Akhir</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-tbody">
+                            <!-- Leaderboard list via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="reviewExam()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    <i class="fas fa-search"></i> Review Pembahasan Soal
+                </button>
+                <button onclick="exitApplication()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    <i class="fas fa-sign-out-alt"></i> Keluar Aplikasi
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8 text-center text-xs text-slate-500">
+        <p>© 2026 SDN TRIMULYO 02 - Tim TKA Literasi & Numerasi Kota Semarang</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ==========================================================================
+           DATA SOAL 25 NUMERASI MATEMATIKA LENGKAP DARI PDF BESERTA GAMBAR & PEMBAHASAN
+           ========================================================================== */
+        
+        const questionsData = [
+            // Soal 1
+            {
+                question: "1. Perhatikan gambar persegi. Jika panjang sisi 12 cm, keliling bangun adalah ...",
+                svg: `<svg width="140" height="140" viewBox="0 0 140 140">
+                        <rect x="20" y="20" width="100" height="100" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+                        <text x="70" y="135" text-anchor="middle" font-size="12" font-weight="bold" fill="#0369a1">s = 12 cm</text>
+                      </svg>`,
+                options: ["A. 36 cm", "B. 44 cm", "C. 48 cm", "D. 52 cm"],
+                answer: 2,
+                explanation: "Rumus Keliling Persegi = 4 × sisi\n= 4 × 12 cm\n= 48 cm."
+            },
+            // Soal 2
+            {
+                question: "2. Perhatikan gambar persegi panjang. Panjang 20 m dan lebar 12 m. Luas bangun adalah ...",
+                svg: `<svg width="200" height="130" viewBox="0 0 200 130">
+                        <rect x="20" y="20" width="160" height="80" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+                        <text x="100" y="118" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d">p = 20 m</text>
+                        <text x="10" y="65" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d" transform="rotate(-90 10 65)">l = 12 m</text>
+                      </svg>`,
+                options: ["A. 220 m²", "B. 240 m²", "C. 320 m²", "D. 400 m²"],
+                answer: 1,
+                explanation: "Rumus Luas Persegi Panjang = panjang × lebar\n= 20 m × 12 m\n= 240 m²."
+            },
+            // Soal 3
+            {
+                question: "3. Perhatikan segitiga siku-siku. Alas 18 cm dan tinggi 12 cm. Luas segitiga adalah ...",
+                svg: `<svg width="180" height="130" viewBox="0 0 180 130">
+                        <polygon points="30,20 30,100 160,100" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+                        <rect x="30" y="90" width="10" height="10" fill="none" stroke="#d97706" stroke-width="2"/>
+                        <text x="95" y="118" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309">a = 18 cm</text>
+                        <text x="18" y="60" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309" transform="rotate(-90 18 60)">t = 12 cm</text>
+                      </svg>`,
+                options: ["A. 90 cm²", "B. 96 cm²", "C. 108 cm²", "D. 120 cm²"],
+                answer: 2,
+                explanation: "Rumus Luas Segitiga = ½ × alas × tinggi\n= ½ × 18 cm × 12 cm\n= 9 × 12\n= 108 cm²."
+            },
+            // Soal 4
+            {
+                question: "4. Perhatikan lingkaran dengan jari-jari 14 cm. Keliling lingkaran adalah ... (π = 22/7)",
+                svg: `<svg width="140" height="140" viewBox="0 0 140 140">
+                        <circle cx="70" cy="70" r="50" fill="#fae8ff" stroke="#c026d3" stroke-width="3"/>
+                        <line x1="70" y1="70" x2="120" y2="70" stroke="#c026d3" stroke-width="2" stroke-dasharray="4"/>
+                        <circle cx="70" cy="70" r="3" fill="#c026d3"/>
+                        <text x="95" y="62" text-anchor="middle" font-size="11" font-weight="bold" fill="#a21caf">r = 14 cm</text>
+                      </svg>`,
+                options: ["A. 44 cm", "B. 88 cm", "C. 154 cm", "D. 308 cm"],
+                answer: 1,
+                explanation: "Rumus Keliling Lingkaran = 2 × π × r\n= 2 × (22/7) × 14 cm\n= 2 × 22 × 2\n= 88 cm."
+            },
+            // Soal 5
+            {
+                question: "5. Gambar tabung memiliki jari-jari 7 cm dan tinggi 10 cm. Volume tabung adalah ...",
+                svg: `<svg width="140" height="150" viewBox="0 0 140 150">
+                        <ellipse cx="70" cy="30" rx="45" ry="15" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                        <path d="M 25,30 L 25,120 A 45,15 0 0,0 115,120 L 115,30" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                        <path d="M 25,120 A 45,15 0 0,1 115,120" fill="none" stroke="#4f46e5" stroke-width="2" stroke-dasharray="3"/>
+                        <line x1="70" y1="30" x2="115" y2="30" stroke="#4f46e5" stroke-width="2"/>
+                        <text x="92" y="24" text-anchor="middle" font-size="11" font-weight="bold" fill="#3730a3">r=7cm</text>
+                        <text x="128" y="75" text-anchor="middle" font-size="11" font-weight="bold" fill="#3730a3">t=10cm</text>
+                      </svg>`,
+                options: ["A. 440 cm³", "B. 770 cm³", "C. 1540 cm³", "D. 3080 cm³"],
+                answer: 2,
+                explanation: "Rumus Volume Tabung = π × r² × t\n= (22/7) × 7 × 7 × 10\n= 154 × 10\n= 1540 cm³."
+            },
+            // Soal 6
+            {
+                question: "6. Perhatikan trapesium dengan sisi sejajar 12 cm dan 8 cm, tinggi 10 cm. Luasnya adalah ...",
+                svg: `<svg width="180" height="130" viewBox="0 0 180 130">
+                        <polygon points="50,30 130,30 160,100 20,100" fill="#ffedd5" stroke="#ea580c" stroke-width="3"/>
+                        <line x1="50" y1="30" x2="50" y2="100" stroke="#ea580c" stroke-width="2" stroke-dasharray="4"/>
+                        <text x="90" y="22" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">b = 8 cm</text>
+                        <text x="90" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">a = 12 cm</text>
+                        <text x="38" y="70" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">t=10cm</text>
+                      </svg>`,
+                options: ["A. 80 cm²", "B. 90 cm²", "C. 100 cm²", "D. 110 cm²"],
+                answer: 2,
+                explanation: "Rumus Luas Trapesium = ½ × (a + b) × t\n= ½ × (12 + 8) × 10\n= ½ × 20 × 10\n= 100 cm²."
+            },
+            // Soal 7
+            {
+                question: "7. Belah ketupat dengan diagonal 12 cm dan 16 cm. Luas bangun adalah ...",
+                svg: `<svg width="160" height="150" viewBox="0 0 160 150">
+                        <polygon points="80,10 140,75 80,140 20,75" fill="#ecfdf5" stroke="#059669" stroke-width="3"/>
+                        <line x1="80" y1="10" x2="80" y2="140" stroke="#059669" stroke-width="2" stroke-dasharray="3"/>
+                        <line x1="20" y1="75" x2="140" y2="75" stroke="#059669" stroke-width="2" stroke-dasharray="3"/>
+                        <text x="95" y="45" text-anchor="start" font-size="11" font-weight="bold" fill="#047857">d1=12 cm</text>
+                        <text x="80" y="90" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">d2=16 cm</text>
+                      </svg>`,
+                options: ["A. 72 cm²", "B. 84 cm²", "C. 96 cm²", "D. 108 cm²"],
+                answer: 2,
+                explanation: "Rumus Luas Belah Ketupat = ½ × d1 × d2\n= ½ × 12 cm × 16 cm\n= 6 × 16\n= 96 cm²."
+            },
+            // Soal 8
+            {
+                question: "8. Gambar kubus dengan rusuk 8 cm. Luas permukaan kubus adalah ...",
+                svg: `<svg width="150" height="140" viewBox="0 0 150 140">
+                        <rect x="20" y="40" width="70" height="70" fill="none" stroke="#2563eb" stroke-width="2"/>
+                        <rect x="50" y="10" width="70" height="70" fill="none" stroke="#2563eb" stroke-width="2"/>
+                        <line x1="20" y1="40" x2="50" y2="10" stroke="#2563eb" stroke-width="2"/>
+                        <line x1="90" y1="40" x2="120" y2="10" stroke="#2563eb" stroke-width="2"/>
+                        <line x1="20" y1="110" x2="50" y2="80" stroke="#2563eb" stroke-width="2"/>
+                        <line x1="90" y1="110" x2="120" y2="80" stroke="#2563eb" stroke-width="2"/>
+                        <text x="55" y="128" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">s = 8 cm</text>
+                      </svg>`,
+                options: ["A. 256 cm²", "B. 320 cm²", "C. 384 cm²", "D. 512 cm²"],
+                answer: 2,
+                explanation: "Rumus Luas Permukaan Kubus = 6 × s²\n= 6 × (8 cm)²\n= 6 × 64\n= 384 cm²."
+            },
+            // Soal 9
+            {
+                question: "9. Gambar balok dengan p = 10 cm, l = 6 cm, t = 4 cm. Volumenya adalah ...",
+                svg: `<svg width="180" height="130" viewBox="0 0 180 130">
+                        <rect x="20" y="40" width="110" height="60" fill="none" stroke="#0d9488" stroke-width="2"/>
+                        <rect x="50" y="15" width="110" height="60" fill="none" stroke="#0d9488" stroke-width="2"/>
+                        <line x1="20" y1="40" x2="50" y2="15" stroke="#0d9488" stroke-width="2"/>
+                        <line x1="130" y1="40" x2="160" y2="15" stroke="#0d9488" stroke-width="2"/>
+                        <line x1="20" y1="100" x2="50" y2="75" stroke="#0d9488" stroke-width="2"/>
+                        <line x1="130" y1="100" x2="160" y2="75" stroke="#0d9488" stroke-width="2"/>
+                        <text x="75" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f766e">p=10</text>
+                        <text x="148" y="95" text-anchor="middle" font-size="10" font-weight="bold" fill="#0f766e">l=6</text>
+                        <text x="12" y="70" text-anchor="middle" font-size="10" font-weight="bold" fill="#0f766e">t=4</text>
+                      </svg>`,
+                options: ["A. 180 cm³", "B. 200 cm³", "C. 220 cm³", "D. 240 cm³"],
+                answer: 3,
+                explanation: "Rumus Volume Balok = p × l × t\n= 10 cm × 6 cm × 4 cm\n= 240 cm³."
+            },
+            // Soal 10
+            {
+                question: "10. Perhatikan jam menunjukkan pukul 03.00. Besar sudut terkecil antara jarum pendek dan jarum panjang adalah ...",
+                svg: `<svg width="140" height="140" viewBox="0 0 140 140">
+                        <circle cx="70" cy="70" r="55" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                        <line x1="70" y1="70" x2="70" y2="25" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="70" y1="70" x2="105" y2="70" stroke="#e11d48" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="70" cy="70" r="4" fill="#334155"/>
+                        <text x="70" y="20" text-anchor="middle" font-size="10" font-weight="bold">12</text>
+                        <text x="120" y="74" text-anchor="middle" font-size="10" font-weight="bold">3</text>
+                        <text x="70" y="128" text-anchor="middle" font-size="10" font-weight="bold">6</text>
+                        <text x="20" y="74" text-anchor="middle" font-size="10" font-weight="bold">9</text>
+                      </svg>`,
+                options: ["A. 30°", "B. 60°", "C. 90°", "D. 120°"],
+                answer: 2,
+                explanation: "Tiap 1 angka pada jam mewakili 30°.\nPukul 03.00 jarum panjang di angka 12 dan pendek di angka 3 (jarak 3 angka).\nBesar Sudut = 3 × 30° = 90° (Sudut siku-siku)."
+            },
+            // Soal 11
+            {
+                question: "11. Gambar pita sepanjang 2,5 m dipotong menjadi 5 bagian sama panjang. Panjang tiap bagian adalah ...",
+                svg: `<svg width="220" height="70" viewBox="0 0 220 70">
+                        <rect x="10" y="15" width="200" height="25" fill="#f43f5e" rx="4"/>
+                        <line x1="50" y1="15" x2="50" y2="40" stroke="#ffffff" stroke-dasharray="2"/>
+                        <line x1="90" y1="15" x2="90" y2="40" stroke="#ffffff" stroke-dasharray="2"/>
+                        <line x1="130" y1="15" x2="130" y2="40" stroke="#ffffff" stroke-dasharray="2"/>
+                        <line x1="170" y1="15" x2="170" y2="40" stroke="#ffffff" stroke-dasharray="2"/>
+                        <text x="110" y="58" text-anchor="middle" font-size="12" font-weight="bold" fill="#e11d48">Panjang Total = 2,5 m (5 bagian)</text>
+                      </svg>`,
+                options: ["A. 0,25 m", "B. 0,4 m", "C. 0,45 m", "D. 0,5 m"],
+                answer: 3,
+                explanation: "Panjang tiap bagian = Total Panjang ÷ Jumlah Bagian\n= 2,5 m ÷ 5\n= 0,5 m."
+            },
+            // Soal 12
+            {
+                question: "12. Gambar menunjukkan panjang jalan pada denah 5 cm dengan skala 1:200. Panjang sebenarnya adalah ...",
+                svg: `<svg width="200" height="80" viewBox="0 0 200 80">
+                        <line x1="20" y1="35" x2="180" y2="35" stroke="#475569" stroke-width="4" stroke-dasharray="8"/>
+                        <text x="100" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">Panjang pada denah = 5 cm</text>
+                        <text x="100" y="60" text-anchor="middle" font-size="11" font-weight="bold" fill="#2563eb">Skala 1 : 200</text>
+                      </svg>`,
+                options: ["A. 5 m", "B. 10 m", "C. 15 m", "D. 20 m"],
+                answer: 1,
+                explanation: "Jarak Sebenarnya = Jarak Denah × Skala\n= 5 cm × 200\n= 1.000 cm\n= 10 meter."
+            },
+            // Soal 13
+            {
+                question: "13. Diagram lingkaran hewan peliharaan: 90° kucing, 120° anjing, sisanya ikan. Persentase ikan adalah ...",
+                svg: `<svg width="160" height="150" viewBox="0 0 160 150">
+                        <circle cx="80" cy="75" r="55" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                        <!-- Kucing 90 deg -->
+                        <path d="M 80,75 L 80,20 A 55,55 0 0,1 135,75 Z" fill="#3b82f6"/>
+                        <!-- Anjing 120 deg -->
+                        <path d="M 80,75 L 135,75 A 55,55 0 0,1 32.3,102.5 Z" fill="#f59e0b"/>
+                        <!-- Ikan 150 deg -->
+                        <path d="M 80,75 L 32.3,102.5 A 55,55 0 0,1 80,20 Z" fill="#10b981"/>
+                        <text x="105" y="50" font-size="10" fill="#fff" font-weight="bold">90°</text>
+                        <text x="95" y="105" font-size="10" fill="#fff" font-weight="bold">120°</text>
+                        <text x="50" y="65" font-size="10" fill="#fff" font-weight="bold">Ikan</text>
+                      </svg>`,
+                options: ["A. 25%", "B. 33,3%", "C. 37,5%", "D. 41,7%"],
+                answer: 3,
+                explanation: "Sudut Ikan = 360° - (90° + 120°) = 360° - 210° = 150°.\nPersentase Ikan = (150° / 360°) × 100%\n= (5 / 12) × 100%\n≈ 41,67% atau 41,7%."
+            },
+            // Soal 14
+            {
+                question: "14. Diagram batang nilai siswa: A=12, B=8, C=15, D=10. Rata-ratanya adalah ...",
+                svg: `<svg width="220" height="140" viewBox="0 0 220 140">
+                        <line x1="30" y1="110" x2="200" y2="110" stroke="#94a3b8" stroke-width="2"/>
+                        <rect x="45" y="38" width="25" height="72" fill="#6366f1"/>
+                        <rect x="85" y="62" width="25" height="48" fill="#ec4899"/>
+                        <rect x="125" y="20" width="25" height="90" fill="#8b5cf6"/>
+                        <rect x="165" y="50" width="25" height="60" fill="#14b8a6"/>
+                        <text x="57" y="125" text-anchor="middle" font-size="10" font-weight="bold">A(12)</text>
+                        <text x="97" y="125" text-anchor="middle" font-size="10" font-weight="bold">B(8)</text>
+                        <text x="137" y="125" text-anchor="middle" font-size="10" font-weight="bold">C(15)</text>
+                        <text x="177" y="125" text-anchor="middle" font-size="10" font-weight="bold">D(10)</text>
+                      </svg>`,
+                options: ["A. 10,5", "B. 11,25", "C. 11,5", "D. 12,0"],
+                answer: 1,
+                explanation: "Mean (Rata-rata) = Total Nilai ÷ Jumlah Kelompok\n= (12 + 8 + 15 + 10) ÷ 4\n= 45 ÷ 4\n= 11,25."
+            },
+            // Soal 15
+            {
+                question: "15. Tabel tinggi 10 siswa (cm): 145, 147, 148, 149, 149, 150, 152, 153, 155, 156. Mediannya adalah ...",
+                svg: `<div class="overflow-x-auto text-xs"><table class="border-collapse border border-slate-300 bg-white">
+                        <tr class="bg-slate-100"><th class="border border-slate-300 p-1.5">No</th><th class="border border-slate-300 p-1.5">Tinggi (cm)</th></tr>
+                        <tr><td class="border p-1 text-center">1-5</td><td class="border p-1 text-center">145, 147, 148, 149, 149</td></tr>
+                        <tr><td class="border p-1 text-center">6-10</td><td class="border p-1 text-center">150, 152, 153, 155, 156</td></tr>
+                      </table></div>`,
+                options: ["A. 149", "B. 149,5", "C. 150", "D. 150,5"],
+                answer: 1,
+                explanation: "Data terurut 10 nilai (genap).\nMedian terletak di antara data ke-5 dan ke-6.\nData ke-5 = 149, Data ke-6 = 150.\nMedian = (149 + 150) / 2 = 149,5."
+            },
+            // Soal 16
+            {
+                question: "16. Diagram menunjukkan 40% sepak bola, 35% basket, sisanya voli (dari 200 siswa). Banyak siswa yang suka voli adalah ...",
+                svg: `<svg width="160" height="150" viewBox="0 0 160 150">
+                        <circle cx="80" cy="75" r="55" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                        <path d="M 80,75 L 80,20 A 55,55 0 0,1 132.3,92 Z" fill="#0284c7"/>
+                        <path d="M 80,75 L 132.3,92 A 55,55 0 0,1 35.5,107.3 Z" fill="#f97316"/>
+                        <path d="M 80,75 L 35.5,107.3 A 55,55 0 0,1 80,20 Z" fill="#84cc16"/>
+                        <text x="95" y="55" font-size="10" fill="#fff" font-weight="bold">Bola 40%</text>
+                        <text x="80" y="105" font-size="10" fill="#fff" font-weight="bold">Basket 35%</text>
+                        <text x="50" y="65" font-size="10" fill="#fff" font-weight="bold">Voli ?</text>
+                      </svg>`,
+                options: ["A. 40", "B. 45", "C. 50", "D. 55"],
+                answer: 2,
+                explanation: "Persentase Voli = 100% - (40% + 35%) = 25%.\nBanyak siswa suka voli = 25% × 200 = (25/100) × 200 = 50 siswa."
+            },
+            // Soal 17
+            {
+                question: "17. Rata-rata 5 nilai matematika adalah 72. Empat nilai yang ada: 70, 68, 75, 74. Nilai ke-5 adalah ...",
+                svg: `<div class="bg-blue-50 border border-blue-200 p-3 rounded-lg text-xs font-semibold text-blue-900">
+                        Rata-rata (5 siswa) = 72<br>
+                        Data diketahui: 70, 68, 75, 74, [ ? ]
+                      </div>`,
+                options: ["A. 71", "B. 72", "C. 73", "D. 74"],
+                answer: 2,
+                explanation: "Total 5 nilai = 5 × 72 = 360.\nJumlah 4 nilai = 70 + 68 + 75 + 74 = 287.\nNilai ke-5 = 360 - 287 = 73."
+            },
+            // Soal 18
+            {
+                question: "18. Diagram batang jumlah buku dibaca: A=5, B=7, C=4, D=6. Jumlah seluruh buku adalah ...",
+                svg: `<svg width="220" height="130" viewBox="0 0 220 130">
+                        <line x1="30" y1="100" x2="200" y2="100" stroke="#94a3b8" stroke-width="2"/>
+                        <rect x="45" y="50" width="25" height="50" fill="#d97706"/>
+                        <rect x="85" y="30" width="25" height="70" fill="#d97706"/>
+                        <rect x="125" y="60" width="25" height="40" fill="#d97706"/>
+                        <rect x="165" y="40" width="25" height="60" fill="#d97706"/>
+                        <text x="57" y="115" text-anchor="middle" font-size="10" font-weight="bold">A(5)</text>
+                        <text x="97" y="115" text-anchor="middle" font-size="10" font-weight="bold">B(7)</text>
+                        <text x="137" y="115" text-anchor="middle" font-size="10" font-weight="bold">C(4)</text>
+                        <text x="177" y="115" text-anchor="middle" font-size="10" font-weight="bold">D(6)</text>
+                      </svg>`,
+                options: ["A. 20", "B. 21", "C. 22", "D. 23"],
+                answer: 2,
+                explanation: "Jumlah seluruh buku = 5 + 7 + 4 + 6 = 22 buku."
+            },
+            // Soal 19
+            {
+                question: "19. Lima tinggi badan (cm): 140, 145, 150, 155, 160. Mean (rata-ratanya) adalah ...",
+                svg: `<div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-xs font-semibold text-amber-900">
+                        Data Tinggi Badan: 140 cm, 145 cm, 150 cm, 155 cm, 160 cm
+                      </div>`,
+                options: ["A. 140", "B. 150", "C. 130", "D. 160"],
+                answer: 1,
+                explanation: "Mean = (140 + 145 + 150 + 155 + 160) ÷ 5\n= 750 ÷ 5\n= 150 cm."
+            },
+            // Soal 20
+            {
+                question: "20. Tabel stok buah: Apel 20, Jeruk 25, Mangga 15. Jumlah buah seluruhnya adalah ...",
+                svg: `<div class="overflow-x-auto text-xs"><table class="border-collapse border border-slate-300 bg-white">
+                        <tr class="bg-slate-100"><th class="border p-2">Buah</th><th class="border p-2">Stok (Jumlah)</th></tr>
+                        <tr><td class="border p-1.5">Apel</td><td class="border p-1.5 text-center">20</td></tr>
+                        <tr><td class="border p-1.5">Jeruk</td><td class="border p-1.5 text-center">25</td></tr>
+                        <tr><td class="border p-1.5">Mangga</td><td class="border p-1.5 text-center">15</td></tr>
+                      </table></div>`,
+                options: ["A. 55", "B. 58", "C. 60", "D. 62"],
+                answer: 2,
+                explanation: "Jumlah buah seluruhnya = 20 + 25 + 15 = 60 buah."
+            },
+            // Soal 21
+            {
+                question: "21. Diagram nilai ulangan 5 siswa: 80, 70, 85, 75, 90. Rata-rata nilai adalah ...",
+                svg: `<svg width="220" height="130" viewBox="0 0 220 130">
+                        <line x1="30" y1="100" x2="200" y2="100" stroke="#94a3b8" stroke-width="2"/>
+                        <rect x="35" y="30" width="20" height="70" fill="#3b82f6"/>
+                        <rect x="70" y="45" width="20" height="55" fill="#3b82f6"/>
+                        <rect x="105" y="22" width="20" height="78" fill="#3b82f6"/>
+                        <rect x="140" y="38" width="20" height="62" fill="#3b82f6"/>
+                        <rect x="175" y="15" width="20" height="85" fill="#3b82f6"/>
+                        <text x="45" y="115" text-anchor="middle" font-size="9" font-weight="bold">S1(80)</text>
+                        <text x="80" y="115" text-anchor="middle" font-size="9" font-weight="bold">S2(70)</text>
+                        <text x="115" y="115" text-anchor="middle" font-size="9" font-weight="bold">S3(85)</text>
+                        <text x="150" y="115" text-anchor="middle" font-size="9" font-weight="bold">S4(75)</text>
+                        <text x="185" y="115" text-anchor="middle" font-size="9" font-weight="bold">S5(90)</text>
+                      </svg>`,
+                options: ["A. 78", "B. 79", "C. 80", "D. 82"],
+                answer: 2,
+                explanation: "Rata-rata = (80 + 70 + 85 + 75 + 90) ÷ 5\n= 400 ÷ 5\n= 80."
+            },
+            // Soal 22
+            {
+                question: "22. Perbandingan siswa laki-laki dan perempuan: 12 dan 18. Bentuk paling sederhana adalah ...",
+                svg: `<div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg text-xs font-semibold text-indigo-900 text-center">
+                        Laki-laki : Perempuan = 12 : 18
+                      </div>`,
+                options: ["A. 3:2", "B. 2:3", "C. 4:6", "D. 6:9"],
+                answer: 1,
+                explanation: "Sederhanakan 12 : 18 dengan membagi kedua bilangan dengan FPB nya (6).\n12 ÷ 6 = 2\n18 ÷ 6 = 3\nBentuk paling sederhana = 2 : 3."
+            },
+            // Soal 23
+            {
+                question: "23. Bangun L berikut tersusun dari persegi panjang 10 × 8 cm dikurangi bagian 4 × 3 cm. Luas bangun adalah ...",
+                svg: `<svg width="180" height="130" viewBox="0 0 180 130">
+                        <path d="M 20,20 L 140,20 L 140,60 L 90,60 L 90,110 L 20,110 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+                        <text x="80" y="15" text-anchor="middle" font-size="10" font-weight="bold">10 cm</text>
+                        <text x="10" y="65" text-anchor="middle" font-size="10" font-weight="bold">8 cm</text>
+                        <text x="115" y="55" text-anchor="middle" font-size="10" fill="#b45309">4 cm</text>
+                        <text x="98" y="85" text-anchor="middle" font-size="10" fill="#b45309">3 cm</text>
+                      </svg>`,
+                options: ["A. 62 cm²", "B. 64 cm²", "C. 68 cm²", "D. 72 cm²"],
+                answer: 2,
+                explanation: "Luas Total Persegi Panjang Utuh = 10 cm × 8 cm = 80 cm².\nLuas Bagian Potongan = 4 cm × 3 cm = 12 cm².\nLuas Bangun L = 80 cm² - 12 cm² = 68 cm²."
+            },
+            // Soal 24
+            {
+                question: "24. Sebuah kubus besar berukuran 10 × 10 × 10 satuan diisi kubus kecil 1 × 1 × 1. Banyak kubus kecil seluruhnya adalah ...",
+                svg: `<svg width="140" height="130" viewBox="0 0 140 130">
+                        <rect x="20" y="20" width="80" height="80" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+                        <line x1="20" y1="45" x2="100" y2="45" stroke="#94a3b8"/>
+                        <line x1="20" y1="70" x2="100" y2="70" stroke="#94a3b8"/>
+                        <line x1="45" y1="20" x2="45" y2="100" stroke="#94a3b8"/>
+                        <line x1="70" y1="20" x2="70" y2="100" stroke="#94a3b8"/>
+                        <text x="60" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">10 × 10 × 10 kubus kecil</text>
+                      </svg>`,
+                options: ["A. 100", "B. 500", "C. 750", "D. 1000"],
+                answer: 3,
+                explanation: "Banyak kubus kecil = Volume Kubus Besar ÷ Volume Kubus Kecil\n= (10 × 10 × 10) ÷ (1 × 1 × 1)\n= 1.000 kubus kecil."
+            },
+            // Soal 25
+            {
+                question: "25. Segitiga siku-siku pada gambar memiliki sudut siku-siku (90°) dan satu sudut lain 35°. Besar sudut ketiga adalah ...",
+                svg: `<svg width="180" height="120" viewBox="0 0 180 120">
+                        <polygon points="20,15 20,95 150,95" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+                        <rect x="20" y="83" width="12" height="12" fill="none" stroke="#0d9488" stroke-width="2"/>
+                        <text x="38" y="85" font-size="10" font-weight="bold" fill="#0f766e">90°</text>
+                        <text x="120" y="90" font-size="10" font-weight="bold" fill="#0f766e">35°</text>
+                        <text x="28" y="35" font-size="10" font-weight="bold" fill="#0f766e">?</text>
+                      </svg>`,
+                options: ["A. 45°", "B. 50°", "C. 55°", "D. 65°"],
+                answer: 2,
+                explanation: "Jumlah total sudut dalam segitiga = 180°.\nBesar sudut ketiga = 180° - (90° + 35°)\n= 180° - 125°\n= 55°."
+            }
+        ];
+
+        /* ==========================================================================
+           DATA SISWA DUMMY UNTUK REKAP KELAS & REKAP PERINGKAT
+           ========================================================================== */
+        let participantsData = [
+            { nama: "Ahmad Rizky", kelas: "6A", absen: "01", answers: [2,1,2,1,2,2,2,2,3,2,3,1,3,1,1,2,2,2,1,2,2,1,2,3,2], score: 100 },
+            { nama: "Siti Nurhaliza", kelas: "6A", absen: "12", answers: [2,1,2,1,2,2,2,2,3,2,3,1,3,1,1,2,2,2,1,2,2,1,2,3,1], score: 96 },
+            { nama: "Budi Pratama", kelas: "6B", absen: "05", answers: [2,1,2,1,2,2,2,2,3,2,3,1,3,1,1,2,2,2,1,2,2,1,0,3,1], score: 92 },
+            { nama: "Dewi Anggraini", kelas: "6C", absen: "08", answers: [2,1,2,1,2,2,2,2,3,2,3,1,3,1,1,2,0,2,1,2,2,1,0,3,1], score: 88 },
+            { nama: "Eko Prasetyo", kelas: "6B", absen: "10", answers: [2,1,2,1,2,2,2,2,3,2,1,1,3,1,1,2,0,2,1,2,0,1,0,3,1], score: 80 }
+        ];
+
+        /* ==========================================================================
+           STATE SISTEM
+           ========================================================================== */
+        let currentUser = {
+            nama: "",
+            absen: "",
+            kelas: "6A",
+            answers: new Array(25).fill(null),
+            score: 0,
+            isFinished: false
+        };
+
+        let currentQuestionIndex = 0;
+        let timerInterval = null;
+        let timeRemaining = 60 * 60; // 60 Menit (3600 detik)
+
+        /* ==========================================================================
+           LOGIKA & INTERAKSI UJIAN
+           ========================================================================== */
+
+        // Mulai Ujian dari Form Login
+        function startExam(e) {
+            e.preventDefault();
+            const nama = document.getElementById('input-nama').value.trim();
+            const absen = document.getElementById('input-absen').value;
+            const kelas = document.getElementById('input-kelas').value;
+
+            if(!nama || !absen) return;
+
+            currentUser.nama = nama;
+            currentUser.absen = absen;
+            currentUser.kelas = kelas;
+
+            // Transisi Halaman ke Soal No. 1
+            document.getElementById('screen-login').classList.add('hidden');
+            document.getElementById('screen-exam').classList.remove('hidden');
+            document.getElementById('header-timer').classList.remove('hidden');
+
+            renderQuestionGrid();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        // Timer Hitung Mundur 60 Menit
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                
+                document.getElementById('timer-display').innerText = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    autoFinishOnTimeout();
+                }
+            }, 1000);
+        }
+
+        // Otomatis Selesai bila Waktu Habis
+        function autoFinishOnTimeout() {
+            currentUser.isFinished = true;
+            calculateScore();
+
+            document.getElementById('time-out-banner').classList.remove('hidden');
+            document.getElementById('rekap-link-container').classList.remove('hidden');
+            document.getElementById('header-timer').classList.add('bg-slate-500');
+            document.getElementById('header-timer').classList.remove('bg-red-600', 'animate-pulse');
+            document.getElementById('timer-display').innerText = "WAKTU HABIS";
+
+            loadQuestion(currentQuestionIndex);
+        }
+
+        // Tampilkan Pertanyaan Spesifik
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const qData = questionsData[index];
+
+            // Render Gambar/Visual Soal & Teks
+            document.getElementById('illustration-container').innerHTML = qData.svg;
+            document.getElementById('question-number').innerText = index + 1;
+            document.getElementById('question-text').innerText = qData.question;
+
+            // Render Pilihan Jawaban
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = '';
+
+            qData.options.forEach((opt, optIdx) => {
+                const isSelected = currentUser.answers[index] === optIdx;
+                
+                let btnStyle = "bg-white border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-700";
+                
+                if (isSelected) {
+                    btnStyle = "bg-blue-50 border-blue-600 text-blue-900 font-semibold ring-2 ring-blue-500/20";
+                }
+
+                // Kondisi setelah selesai (Tampilkan Jawaban Benar & Salah)
+                if (currentUser.isFinished) {
+                    if (optIdx === qData.answer) {
+                        btnStyle = "bg-emerald-100 border-emerald-500 text-emerald-900 font-bold";
+                    } else if (isSelected && isSelected !== (optIdx === qData.answer)) {
+                        btnStyle = "bg-rose-100 border-rose-500 text-rose-900 line-through";
+                    }
+                }
+
+                const optBtn = document.createElement('button');
+                optBtn.className = `w-full text-left p-3.5 rounded-xl border text-sm md:text-base transition flex items-center justify-between ${btnStyle}`;
+                optBtn.onclick = () => selectAnswer(optIdx);
+                optBtn.innerHTML = `
+                    <span>${opt}</span>
+                    ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-lg"></i>' : ''}
+                `;
+                
+                if (currentUser.isFinished && optIdx === qData.answer) {
+                    optBtn.innerHTML += `<span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded ml-2">Kunci Jawaban</span>`;
+                }
+
+                optionsBox.appendChild(optBtn);
+            });
+
+            // Tampilkan Pembahasan jika Ujian Selesai / Waktu Habis
+            const pembahasanBox = document.getElementById('pembahasan-box');
+            if (currentUser.isFinished) {
+                pembahasanBox.classList.remove('hidden');
+                document.getElementById('pembahasan-text').innerText = qData.explanation;
+            } else {
+                pembahasanBox.classList.add('hidden');
+            }
+
+            // Pengaturan Tombol Navigasi Bawah
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnFinish = document.getElementById('btn-finish');
+
+            // Nomor 1: Sembunyikan tombol sebelumnya (hanya tampil tombol selanjutnya)
+            if (index === 0) {
+                btnPrev.classList.add('hidden');
+            } else {
+                btnPrev.classList.remove('hidden');
+            }
+
+            // Nomor Terakhir (25): Sembunyikan selanjutnya, tampilkan Selesaikan Ujian
+            if (index === questionsData.length - 1) {
+                btnNext.classList.add('hidden');
+                if(!currentUser.isFinished) btnFinish.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            }
+
+            renderQuestionGrid();
+        }
+
+        // Simpan Pilihan Jawaban
+        function selectAnswer(optionIndex) {
+            if (currentUser.isFinished) return;
+            currentUser.answers[currentQuestionIndex] = optionIndex;
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        // Render Navigasi Kotak Sejajar 3 Baris / Kolom
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((_, idx) => {
+                const isAnswered = currentUser.answers[idx] !== null;
+                const isCurrent = idx === currentQuestionIndex;
+
+                let stateClass = "bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300";
+
+                if (isAnswered) {
+                    stateClass = "bg-blue-600 text-white font-semibold border-blue-700"; // Berubah warna jika sudah dikerjakan
+                }
+
+                if (isCurrent) {
+                    stateClass += " ring-2 ring-blue-500 ring-offset-1 font-bold";
+                }
+
+                if (currentUser.isFinished) {
+                    const isCorrect = currentUser.answers[idx] === questionsData[idx].answer;
+                    stateClass = isCorrect ? "bg-emerald-600 text-white font-bold" : "bg-rose-500 text-white font-bold";
+                }
+
+                const gridBtn = document.createElement('button');
+                gridBtn.className = `h-10 text-xs md:text-sm rounded-lg border flex items-center justify-center transition shadow-sm ${stateClass}`;
+                gridBtn.innerText = idx + 1;
+                gridBtn.onclick = () => loadQuestion(idx);
+
+                gridContainer.appendChild(gridBtn);
+            });
+        }
+
+        // Prompt Selesaikan Ujian
+        function finishExamPrompt() {
+            const unanswered = currentUser.answers.filter(a => a === null).length;
+            let msg = "Apakah Anda yakin ingin menyelesaikan seluruh ujian ini?";
+            if(unanswered > 0) {
+                msg = `Masih ada ${unanswered} soal yang belum dijawab. Apakah Anda yakin ingin mengumpulkan?`;
+            }
+
+            // Pengganti alert/confirm standar dengan modal sederhana/konfirmasi UI aman
+            if (window.confirm(msg)) {
+                clearInterval(timerInterval);
+                currentUser.isFinished = true;
+                calculateScore();
+                showResultsScreen();
+            }
+        }
+
+        // Hitung Nilai Akhir (Skor 0 - 100)
+        function calculateScore() {
+            let correctCount = 0;
+            currentUser.answers.forEach((ans, idx) => {
+                if (ans === questionsData[idx].answer) {
+                    correctCount++;
+                }
+            });
+
+            currentUser.score = Math.round((correctCount / questionsData.length) * 100);
+            
+            const existingIndex = participantsData.findIndex(p => p.nama === currentUser.nama && p.absen === currentUser.absen);
+            if(existingIndex >= 0) {
+                participantsData[existingIndex] = { ...currentUser };
+            } else {
+                participantsData.push({ ...currentUser });
+            }
+
+            // Urutkan Peringkat Berdasarkan Skor Tertinggi
+            participantsData.sort((a, b) => b.score - a.score);
+        }
+
+        // Tampilkan Halaman Rekap & Peringkat
+        function showResultsScreen() {
+            document.getElementById('screen-exam').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+            document.getElementById('header-timer').classList.add('hidden');
+
+            document.getElementById('user-score').innerText = currentUser.score;
+            
+            const correctCount = currentUser.answers.filter((ans, idx) => ans === questionsData[idx].answer).length;
+            const wrongCount = questionsData.length - correctCount;
+            document.getElementById('user-correct-wrong').innerText = `${correctCount} / ${wrongCount}`;
+
+            const userRankIndex = participantsData.findIndex(p => p.nama === currentUser.nama && p.absen === currentUser.absen);
+            document.getElementById('user-rank').innerText = `#${userRankIndex + 1}`;
+
+            renderMatrixAnalysis();
+            renderLeaderboard();
+        }
+
+        // Render Analisis Penilaian Siswa Matriks (Satu Kolom Per 1 Soal dari No 1-25)
+        function renderMatrixAnalysis() {
+            const tbody = document.getElementById('matrix-analysis-tbody');
+            tbody.innerHTML = '';
+
+            participantsData.forEach((student) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-slate-50 transition";
+
+                let colsHtml = `
+                    <td class="p-3 text-left font-semibold text-slate-800 border-r">${student.nama}</td>
+                    <td class="p-3 border-r">${student.kelas}</td>
+                    <td class="p-3 border-r">${student.absen}</td>
+                `;
+
+                // Loop 25 Kolom Terpisah untuk Soal 1 s/d 25
+                for (let i = 0; i < 25; i++) {
+                    const isCorrect = student.answers[i] === questionsData[i].answer;
+                    const cellBg = isCorrect ? "bg-emerald-500 text-white" : "bg-rose-500 text-white";
+                    const symbol = isCorrect ? "B" : "S";
+
+                    colsHtml += `<td class="p-1 border-r font-bold text-xs ${cellBg}">${symbol}</td>`;
+                }
+
+                colsHtml += `<td class="p-3 font-bold text-blue-700 bg-blue-50">${student.score}</td>`;
+                tr.innerHTML = colsHtml;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render Tabel Rekap Peringkat Peserta
+        function renderLeaderboard() {
+            const tbody = document.getElementById('leaderboard-tbody');
+            tbody.innerHTML = '';
+
+            participantsData.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-slate-50 transition";
+                
+                const isCurrentUser = student.nama === currentUser.nama && student.absen === currentUser.absen;
+                if(isCurrentUser) {
+                    tr.className += " bg-blue-50/70 font-semibold";
+                }
+
+                const correctCount = student.answers.filter((ans, idx) => ans === questionsData[idx].answer).length;
+
+                let medal = index + 1;
+                if(index === 0) medal = "🥇 1";
+                else if(index === 1) medal = "🥈 2";
+                else if(index === 2) medal = "🥉 3";
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-700">${medal}</td>
+                    <td class="p-3 text-slate-800">${student.nama} ${isCurrentUser ? '<span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">Anda</span>' : ''}</td>
+                    <td class="p-3 text-slate-600">${student.kelas}</td>
+                    <td class="p-3 text-slate-600">${student.absen}</td>
+                    <td class="p-3 text-center text-emerald-600 font-semibold">${correctCount} / 25</td>
+                    <td class="p-3 text-right font-extrabold text-blue-700 text-base">${student.score}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Tinjau Ulang Pembahasan Soal
+        function reviewExam() {
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById('screen-exam').classList.remove('hidden');
+            document.getElementById('rekap-link-container').classList.remove('hidden');
+            loadQuestion(0);
+        }
+
+        // Keluar Aplikasi Ujian
+        function exitApplication() {
+            if(window.confirm("Apakah Anda yakin ingin keluar dari aplikasi ujian?")) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
